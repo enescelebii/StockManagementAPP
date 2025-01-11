@@ -20,110 +20,34 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Bootstrap ve CSS dosyaları -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
-<style>
-    /* Genel stil ayarları */
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        height: 100vh;
-    }
-
-    h1 {
-        text-align: center;
-        color: #ff0000;
-        margin-bottom: 20px;
-    }
-
-    /* Kullanıcı ekleme formu stili */
-    .form-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 20px;
-        align-items: center;
-    }
-
-    .form-container input[type="text"] {
-        padding: 8px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        width: 200px;
-    }
-
-    .form-container button {
-        padding: 10px 20px;
-        background-color: #0d264a;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        color: #ff00b8;
-    }
-
-    .form-container button:hover {
-        background-color: #4e274c;
-    }
-
-    .form-container .roles {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-
-    /* Silme butonları */
-    button.delete-btn {
-        background-color: #f44336;
-    }
-
-    button.delete-btn:hover {
-        background-color: #d32f2f;
-    }
-
-    /* Boş mesaj için stil */
-    .no-users {
-        text-align: center;
-        font-style: italic;
-        color: #888;
-    }
-</style>
 </head>
-<body>
-<h1 style="margin-top: 50px">Kullanıcılar</h1>
+<body class="d-flex flex-column align-items-center" style="height: 100vh; margin: 0; padding: 0;">
+<h1 class="text-center text-danger mt-5 mb-4">Kullanıcılar</h1>
 
 <!-- Kullanıcı Ekleme Formu -->
-<div class="form-container">
-    <input type="text" id="username" placeholder="Kullanıcı adı" required>
-    <input type="text" id="password" placeholder="Şifre" required>
+<div class="form-container d-flex flex-column gap-3 mb-4 align-items-center">
+    <input type="text" id="username" placeholder="Kullanıcı adı" class="form-control w-75" required>
+    <input type="text" id="password" placeholder="Şifre" class="form-control w-75" required>
 
     <!-- Roller için checkbox'lar -->
-    <div>
+    <div class="d-flex gap-3">
         <label><input type="checkbox" id="role-customer" value="ROLE_CUSTOMER"> Müşteri</label>
         <label><input type="checkbox" id="role-admin" value="ROLE_ADMIN"> Yönetici</label>
     </div>
 
-    <button onclick="addUser()">Kullanıcı Ekle</button>
-    <button onclick="window.location.reload()" >Reload Users</button>
+    <button class="btn btn-success m-2" onclick="addUser()">Kullanıcı Ekle</button>
+    <button class="btn btn-warning" onclick="window.location.reload()">Reload Users</button>
 </div>
 
 <!-- Kullanıcı Tablosu -->
-<div class="col-12" style="width: auto">
-    <div class="bg-secondary rounded h-100 p-4">
-        <h6 class="mb-4">Kullanıcılar Tablosu</h6>
+<div class="col-12 w-auto">
+    <div class="bg-secondary rounded p-4">
+        <h6 class="mb-4 text-light">Kullanıcılar Tablosu</h6>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table table-striped table-dark">
                 <thead>
                 <tr>
                     <th scope="col">ID</th>
@@ -135,13 +59,14 @@
                 <tbody id="user-table-body">
                 <!-- Kullanıcılar buraya eklenecek -->
                 <tr class="no-users">
-                    <td colspan="4">Hiç kullanıcı bulunamadı.</td>
+                    <td colspan="4" class="text-center text-muted">Hiç kullanıcı bulunamadı.</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
 
 <script>
     window.onload = function() {
@@ -160,7 +85,7 @@
                             <td>${user.id}</td>
                             <td>${user.username}</td>
                             <td>${user.password}</td>
-                            <td><button class="delete-btn" onclick="deleteUser(${user.id})">Sil</button></td>
+                            <td><button class="delete-btn btn-danger" onclick="deleteUser(${user.id})">Sil</button></td>
                         `;
                         userTableBody.appendChild(row);  // Satırı tabloya ekle
                     });
