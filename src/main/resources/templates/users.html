@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>User System</title>
+<!-- Meta ve bağlantılar -->
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Bootstrap ve CSS dosyaları -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+<style>
+    /* Genel stil ayarları */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        height: 100vh;
+    }
+
+    h1 {
+        text-align: center;
+        color: #ff0000;
+        margin-bottom: 20px;
+    }
+
+    /* Kullanıcı ekleme formu stili */
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+        align-items: center;
+    }
+
+    .form-container input[type="text"] {
+        padding: 8px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 200px;
+    }
+
+    .form-container button {
+        padding: 10px 20px;
+        background-color: #0d264a;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #ff00b8;
+    }
+
+    .form-container button:hover {
+        background-color: #4e274c;
+    }
+
+    .form-container .roles {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+
+    /* Silme butonları */
+    button.delete-btn {
+        background-color: #f44336;
+    }
+
+    button.delete-btn:hover {
+        background-color: #d32f2f;
+    }
+
+    /* Boş mesaj için stil */
+    .no-users {
+        text-align: center;
+        font-style: italic;
+        color: #888;
+    }
+</style>
+</head>
+<body>
+<h1 style="margin-top: 50px">Kullanıcılar</h1>
+
+<!-- Kullanıcı Ekleme Formu -->
+<div class="form-container">
+    <input type="text" id="username" placeholder="Kullanıcı adı" required>
+    <input type="text" id="password" placeholder="Şifre" required>
+
+    <!-- Roller için checkbox'lar -->
+    <div>
+        <label><input type="checkbox" id="role-customer" value="ROLE_CUSTOMER"> Müşteri</label>
+        <label><input type="checkbox" id="role-admin" value="ROLE_ADMIN"> Yönetici</label>
+    </div>
+
+    <button onclick="addUser()">Kullanıcı Ekle</button>
+    <button onclick="window.location.reload()" >Reload Users</button>
+</div>
+
+<!-- Kullanıcı Tablosu -->
+<div class="col-12" style="width: auto">
+    <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Kullanıcılar Tablosu</h6>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Sil</th>
+                </tr>
+                </thead>
+                <tbody id="user-table-body">
+                <!-- Kullanıcılar buraya eklenecek -->
+                <tr class="no-users">
+                    <td colspan="4">Hiç kullanıcı bulunamadı.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        // API'den kullanıcı verilerini alıyoruz
+        fetch('/users/list')
+            .then(response => response.json())  // JSON olarak veriyi al
+            .then(data => {
+                const userTableBody = document.getElementById('user-table-body');
+                userTableBody.innerHTML = "";  // Önceki verileri temizle
+
+                if (data && data.length > 0) {
+                    // Veritabanından gelen kullanıcı verilerini tabloya ekleyelim
+                    data.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.password}</td>
+                            <td><button class="delete-btn" onclick="deleteUser(${user.id})">Sil</button></td>
+                        `;
+                        userTableBody.appendChild(row);  // Satırı tabloya ekle
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.classList.add('no-users');
+                    row.innerHTML = '<td colspan="4">Hiç kullanıcı bulunamadı.</td>';
+                    userTableBody.appendChild(row);
+                }
+            })
+            .catch(error => {
+                console.error('Veri alma hatası:', error);
+            });
+    };
+
+    // Kullanıcı ekleme fonksiyonu
+    function addUser() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Seçilen roller
+        const roles = [];
+        if (document.getElementById('role-customer').checked) roles.push('ROLE_CUSTOMER');
+        if (document.getElementById('role-admin').checked) roles.push('ROLE_ADMIN');
+
+        if (!username || !password || roles.length === 0 ) {
+            alert('Lütfen tüm alanları doldurun!');
+            return;
+        }
+
+        const newUser = {
+            username: username,
+            password: password,
+            role: roles // Rolleri ekle
+        };
+
+        fetch('/users/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newUser)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Backend hatası:', response.status, response.statusText);
+                    return Promise.reject('Beklenmeyen bir hata oluştu'); // Daha açıklayıcı bir hata mesajı
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Kullanıcı başarıyla eklendi:', data);
+                // Başarılı işlem sonrası başka bir işlem yapılabilir
+                window.location.reload();
+            }).then(window.location.reload());
+        setTimeout(3000);
+        window.location.reload();
+    }
+
+    // Kullanıcı silme fonksiyonu
+    function deleteUser(userId) {
+        fetch(`/users/${userId}`, {
+            method: 'DELETE',
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Kullanıcı başarıyla silindi!');
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Kullanıcı silinemedi:', error);
+            });
+        window.location.reload();
+    }
+</script>
+
+<b>
+    <a href="/login">Back to home Page</a>
+</b>
+
+</body>
+</html>

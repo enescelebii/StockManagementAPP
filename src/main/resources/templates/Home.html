@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" >
+
+<head>
+    <meta charset="utf-8">
+    <title>Stock Management</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}" rel="stylesheet">
+    <link th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <div class="container-fluid position-relative d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-secondary navbar-dark">
+                <a href="home" class="navbar-brand mx-4 mb-3">
+                    <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>Stocks</h3>
+                </a>
+                <div class="d-flex align-items-center ms-4 mb-4">
+                    <div class="position-relative">
+                        <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                    </div>
+                    <div class="ms-3">
+                        <h6 sec:authentication="principal.username" class="mb-0"></h6>
+                        <span sec:authentication="principal.authorities"></span>
+                    </div>
+                </div>
+                <div class="navbar-nav w-100">
+                    <a href="home" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Home</a>
+                    <a href="users" class="dropdown-item">Sign Up</a>
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <form class="d-none d-md-flex ms-4">
+                    <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+                </form>
+                <button type="button" class="btn btn-warning m-2" data-bs-toggle="modal" data-bs-target="#addStockModal">
+                    Add Stock
+                </button>
+                <button type="button" class="btn btn-danger m-2" onclick="loadStocks(0, 'id')">Sort by ID</button>
+                <button type="button" class="btn btn-success m-2" onclick="loadStocks(0, 'stockName')">Sort by Name</button>
+                <!--SEARCH ELEMENTLERİ EKLENECEK-->
+
+
+
+                <div class="navbar-nav align-items-center ms-auto">
+                    <a class="btn btn-primary" href="javascript:void(0);" onclick="toggleCartPopup()">Sepeti Görüntüle</a>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                            <span sec:authentication="principal.username" class="d-none d-lg-inline-flex"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <form th:action="@{/logout}"  method="post">
+                                <a href="logout" class="dropdown-item">Log Out</a>
+                            </form>
+                            <form th:action="@{/users.html}"  method="post" class="userSystembutton">
+                                <a href="users" class="dropdown-item" onclick="window.location.href='/users';">User System</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- Navbar End -->
+
+            <!-- Sepet Modal -->
+            <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content bg-dark text-light">
+                        <div class="modal-header border-secondary">
+                            <h5 class="modal-title" id="cartModalLabel">🛒 Sepetiniz</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="cart-items" class="d-flex flex-column gap-3"></div>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-success" onclick="confirmCart()">Onayla</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="stockDetailModal" tabindex="-1" aria-labelledby="stockDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="stockDetailModalLabel">Stock Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img id="stockImage" src="" alt="Stock Image" class="img-fluid" style="max-height: 200px; width: auto;">
+                                    <a sec:authorize="hasRole('ADMIN')"
+                                       class="btn btn-warning m-2"
+                                       href="#"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#editStockModal">Edit
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Name:</strong> <span id="stockName"></span></p>
+                                    <p><strong>Stock Code:</strong> <span id="stockCode"></span></p>
+                                    <p><strong>Category:</strong> <span id="stockCategory"></span></p>
+                                    <p><strong>Price:</strong> $<span id="stockPrice"></span></p>
+                                    <p><strong>Remaining Stock:</strong> <span id="stockQuantity"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--Stock Edit Butonu-->
+            <div class="modal fade" id="editStockModal" tabindex="-1" aria-labelledby="editStockModalLabel" aria-hidden="true" style="overflow-y: auto;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editStockModalLabel">Edit Stock</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editStockForm">
+                                <div class="text-center mb-3">
+                                    <img id="editStockImage" src="" alt="Stock Image" class="img-fluid" style="max-height: 200px; width: auto;">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editStockName" class="form-label">Stock Name</label>
+                                    <input type="text" class="form-control" id="editStockName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editStockCategory" class="form-label">Category</label>
+                                    <input type="text" class="form-control" id="editStockCategory" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editStockPrice" class="form-label">Price</label>
+                                    <input type="number" class="form-control" id="editStockPrice" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editStockQuantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="editStockQuantity" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editStockDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="editStockDescription" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editStockImageUpload" class="form-label">Update Image</label>
+                                    <input type="file" class="form-control" id="editStockImageUpload">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="updateStock()">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Stock Ekleme Modalı -->
+            <div class="modal fade" id="addStockModal" tabindex="-1" aria-labelledby="addStockModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form id="addStockForm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addStockModalLabel">Add New Stock</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Stock Details -->
+                                <div class="mb-3">
+                                    <label for="stockName2" class="form-label">Stock Name</label>
+                                    <input type="text" class="form-control" id="stockName2" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="stockPrice2" class="form-label">Stock Price</label>
+                                    <input type="number" class="form-control" id="stockPrice2" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="stockQuantity2" class="form-label">Stock Quantity</label>
+                                    <input type="number" class="form-control" id="stockQuantity2" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="stockCategory2" class="form-label">Stock Category</label>
+                                    <input type="text" class="form-control" id="stockCategory2">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="stockDescription2" class="form-label">Stock Description</label>
+                                    <textarea class="form-control" id="stockDescription2"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="stockImage2" class="form-label">Stock Image</label>
+                                    <input type="file" class="form-control" id="stockImage2">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Add Stock</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- Table Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row vh-100 bg-secondary rounded mx-0">
+                    <!-- <div class="col-md-6 text-center">
+                        <h3>LİSTE VE ORTALAMA YÜZDELİKLER FALAN FİLAN YAZILACAK</h3>
+                    </div> -->
+                    <div class="container-fluid pt-4 px-4">
+                        <div class="bg-secondary text-center rounded p-4">
+                            <!--TABLE-->
+                            <div class="table-responsive" style="width: auto;">
+                                <table class="table text-start align-middle table-bordered table-hover mb-0 border border-2">
+                                    <thead>
+                                        <tr class="text-white">
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Stock Code</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stock-table-body">
+                                        <!--STOCKLAR BURAYA EKLENECEK-->
+
+                                        <tr class="no-stock">
+                                            <td colspan="4">Hiç stock bulunamadı.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div id="pagination" class="text-center mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End -->
+            <!--Scripts Start-->
+            <script>  /*page startup scripts*/
+            window.onload = function() {
+                loadStocks(0 , "id");
+                console.log("Sayfa yüklendi ve ilk komutlar çalıştırıldı.");
+            };
+            </script>
+            <script>
+                /*Stock list table and Sortings*/
+                function loadStocks(page, sortBy = 'id') {
+                    fetch(`/stocks/page?page=${page}&size=8&sortBy=${sortBy}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const stockTableBody = document.getElementById('stock-table-body');
+                            const pagination = document.getElementById('pagination');
+                            stockTableBody.innerHTML = "";
+                            pagination.innerHTML = "";
+
+                            if (data && data.stocks && data.stocks.length > 0) {
+                                data.stocks.forEach(stock => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                    <td>${stock.stockName}</td>
+                    <td>${stock.stockCode}</td>
+                    <td>${stock.stockCategory}</td>
+                    <td>${stock.stockQuantity}</td>
+                    <td>${stock.stockPrice}</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary m-2" href="javascript:void(0);" onclick="showStockDetail('${stock.id}')">Detail</a>
+                        <a class="btn btn-outline-success m-2" href="javascript:void(0);"
+                        onclick="buyStockPrompt('${stock.stockCode}', '${stock.id}', '${stock.stockName}')">Buy</a>
+                    </td>
+                `;
+                                    stockTableBody.appendChild(row);
+                                });
+
+                                const previousButton = document.createElement('button');
+                                previousButton.innerHTML = '<';
+                                previousButton.classList.add('btn', 'btn-secondary', 'm-1');
+                                if (data.currentPage === 0) {
+                                    previousButton.disabled = true;
+                                } else {
+                                    previousButton.onclick = () => loadStocks(data.currentPage - 1, sortBy);
+                                }
+                                pagination.appendChild(previousButton);
+
+                                const maxPageNumbers = 2;
+                                let startPage = Math.max(0, data.currentPage - 1);
+                                let endPage = Math.min(data.totalPages - 1, data.currentPage + 1);
+
+                                for (let i = startPage; i <= endPage; i++) {
+                                    const button = document.createElement('button');
+                                    button.innerText = i + 1;
+                                    button.classList.add('btn', 'btn-secondary', 'm-1');
+                                    if (i === data.currentPage) {
+                                        button.classList.add('active');
+                                    }
+                                    button.onclick = () => loadStocks(i, sortBy);
+                                    pagination.appendChild(button);
+                                }
+
+                                const nextButton = document.createElement('button');
+                                nextButton.innerHTML = '>';
+                                nextButton.classList.add('btn', 'btn-secondary', 'm-1');
+                                if (data.currentPage === data.totalPages - 1) {
+                                    nextButton.disabled = true;
+                                } else {
+                                    nextButton.onclick = () => loadStocks(data.currentPage + 1, sortBy);
+                                }
+                                pagination.appendChild(nextButton);
+                            } else {
+                                const row = document.createElement('tr');
+                                row.classList.add('no-stock');
+                                row.innerHTML = '<td colspan="6">No stocks available.</td>';
+                                stockTableBody.appendChild(row);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Data fetch error: ', error);
+                        });
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+
+
+                window.showStockDetail = function (stockId) {
+                    fetch(`/stocks/${stockId}`)
+                        .then(response => response.json())
+                        .then(stock => {
+                            document.getElementById('stockName').textContent = stock.stockName;
+                            document.getElementById('stockCode').textContent = stock.stockCode;
+                            document.getElementById('stockCategory').textContent = stock.stockCategory;
+                            document.getElementById('stockPrice').textContent = stock.stockPrice;
+                            document.getElementById('stockQuantity').textContent = stock.stockQuantity;
+
+                            const stockImage = `http://localhost:8080/stocks/${stockId}/image`;
+                            document.getElementById('stockImage').src = stockImage ? stockImage : 'default-image-path.jpg';
+
+                            const editButton = document.querySelector('#stockDetailModal .btn-warning');
+                            editButton.setAttribute('onclick', `populateStockModal(${stockId})`);
+
+                            const modal = new bootstrap.Modal(document.getElementById('stockDetailModal'));
+                            modal.show();
+                        })
+                        .catch(error => {
+                            console.error('Error fetching stock details:', error);
+                        });
+                };
+
+
+                document.getElementById('addStockForm').addEventListener('submit', async function (event) {
+                    event.preventDefault();
+
+                    const stockData = {
+                        stockName: document.getElementById('stockName2').value,
+                        stockPrice: parseFloat(document.getElementById('stockPrice2').value),
+                        stockQuantity: parseInt(document.getElementById('stockQuantity2').value, 10),
+                        stockCategory: document.getElementById('stockCategory2').value,
+                        stockDescription: document.getElementById('stockDescription2').value,
+                    };
+
+                    try {
+                        const stockResponse = await fetch('/stocks/add', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(stockData),
+                        });
+
+                        if (!stockResponse.ok) {
+                            throw new Error('Stock addition failed!');
+                        }
+
+                        const addedStock = await stockResponse.json();
+
+                        const fileInput = document.getElementById('stockImage2');
+                        if (fileInput.files.length > 0) {
+                            const formData = new FormData();
+                            formData.append('file', fileInput.files[0]);
+
+                            const imageResponse = await fetch(`/stocks/${addedStock.id}/upload-image`, {
+                                method: 'POST',
+                                body: formData,
+                            });
+
+                            if (!imageResponse.ok) {
+                                throw new Error('Image upload failed!');
+                            }
+
+                            //alert('Stock added successfully with image!');
+                        } else {
+                            //alert('Stock added successfully without image!');
+                        }
+
+                        document.getElementById('addStockForm').reset();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addStockModal'));
+                        modal.hide();
+
+                    } catch (error) {
+                        console.error(error);
+                        alert('An error occurred while adding the stock.');
+                    }
+                });
+            </script>
+            <script>
+                    let currentStockId;
+                    /*STOCK UPDATE*/
+                    async function populateStockModal(stockId) {
+                        document.getElementById('editStockName').value = '';
+                        document.getElementById('editStockCategory').value = '';
+                        document.getElementById('editStockPrice').value = '';
+                        document.getElementById('editStockQuantity').value = '';
+                        document.getElementById('editStockDescription').value = '';
+                        document.getElementById('editStockImage').src = '/default-image.png';
+
+                        currentStockId = stockId; // Save the current stock ID
+                        try {
+                            const response = await fetch(`/stocks/${stockId}`);
+                            if (!response.ok) throw new Error('Failed to fetch stock details');
+                            const stock = await response.json();
+
+                            document.getElementById('editStockName').value = stock.stockName;
+                            document.getElementById('editStockCategory').value = stock.stockCategory;
+                            document.getElementById('editStockPrice').value = stock.stockPrice;
+                            document.getElementById('editStockQuantity').value = stock.stockQuantity;
+                            document.getElementById('editStockDescription').value = stock.stockDescription || '';
+                            const stockImage = `http://localhost:8080/stocks/${stockId}/image`;
+                            document.getElementById('editStockImage').src = stockImage ? stockImage : 'default-image-path.jpg';
+
+                        } catch (error) {
+                            console.error(error.message);
+                        }
+                    }
+
+                    async function updateStock() {
+                        const stockData = {
+                            stockName: document.getElementById('editStockName').value,
+                            stockCategory: document.getElementById('editStockCategory').value,
+                            stockPrice: parseFloat(document.getElementById('editStockPrice').value),
+                            stockQuantity: parseInt(document.getElementById('editStockQuantity').value, 10),
+                            description: document.getElementById('editStockDescription').value,
+                        };
+
+                        try {
+                            // Update stock details
+                            const stockResponse = await fetch(`/stocks/${currentStockId}`, {
+                                method: 'PUT',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(stockData),
+                            });
+                            if (!stockResponse.ok) throw new Error('Stock update failed');
+
+                            // Update stock image
+                            const fileInput = document.getElementById('editStockImageUpload');
+                            if (fileInput.files.length > 0) {
+                                const formData = new FormData();
+                                formData.append('file', fileInput.files[0]);
+
+                                const imageResponse = await fetch(`/stocks/${currentStockId}/upload-image`, {
+                                    method: 'POST',
+                                    body: formData,
+                                });
+                                if (!imageResponse.ok) throw new Error('Image update failed');
+                            }
+
+                            alert('Stock updated successfully!');
+                            location.reload(); // Refresh the page to reflect changes
+                        } catch (error) {
+                            console.error(error.message);
+                        }
+                }
+            </script>
+            <script>
+                const cart = [];
+
+                function addToCart(stock) {
+                    const existingItem = cart.find(item => item.stockId === stock.stockId);
+                    if (existingItem) {
+                        existingItem.quantity += stock.quantity;
+                    } else {
+                        cart.push(stock);
+                    }
+                    alert("Ürün sepete eklendi!");
+                }
+
+
+
+                function toggleCartPopup() {
+                    const cartItemsContainer = document.getElementById("cart-items");
+                    cartItemsContainer.innerHTML = ""; // Önce sepeti temizle
+
+                    cart.forEach(item => {
+                        console.log('Stock ID:', item.stockId); // Debug için ID kontrolü
+
+                        const stockImage = `http://localhost:8080/stocks/${item.stockId}/image`;
+
+                        const div = document.createElement("div");
+                        div.className = "cart-item d-flex align-items-center border-bottom pb-2 mb-2";
+
+                        div.innerHTML = `
+                        <img src="${stockImage}" alt="${item.stockName}" class="rounded" style="width: 60px; height: 60px; object-fit: cover; margin-right: 10px;">
+                        <div>
+                        <strong>${item.stockName}</strong>
+                        <p class="mb-0">Miktar: ${item.quantity}</p>
+                        </div>
+                        `;
+                        cartItemsContainer.appendChild(div);
+                    });
+
+
+                    const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+                    cartModal.show();
+
+
+                    document.getElementById('cartModal').addEventListener('hidden.bs.modal', () => {
+                        console.log('Modal kapatıldı.');
+                    });
+                }
+
+
+
+
+                // Sepeti onaylama ve backend'e gönderme
+                function confirmCart() {
+                    cart.forEach(item => {
+                        fetch(`/stocks/${item.stockCode}/${item.quantity}`, {
+                            method: 'PUT',
+                        })
+                            .then(response => {
+                                if (!response.ok) throw new Error("Satış işlemi başarısız!");
+                                return response.json();
+                            })
+                            .then(() => {
+                                alert(`${item.stockName} başarıyla satın alındı.`);
+                                window.location.reload();
+                            })
+                            .catch(error => alert(error.message));
+                    });
+
+                    // Sepeti temizle ve popup'ı kapat
+                    cart.length = 0;
+                    toggleCartPopup();
+                }
+
+                function buyStockPrompt(stockCode, stockId, stockName) {
+
+                    console.log('Stock Code:', stockCode);
+                    console.log('Stock ID:', stockId);
+                    console.log('Stock Name:', stockName);
+
+                    const quantity = prompt("Enter the quantity you want to buy:");
+                    if (!quantity || isNaN(quantity) || quantity <= 0) {
+                        alert("Invalid quantity. Please enter a valid number.");
+                        return;
+                    }
+
+                    // Sepete ürün ekle
+                    addToCart({ stockCode, stockId, stockName, quantity: parseInt(quantity) });
+                }
+
+
+            </script>
+            <!--Scripts end-->
+            <!-- Footer Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-secondary rounded-top p-4">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 text-center text-sm-start">
+                            &copy; <a href="#">VENDEV STOCK SYSTEMS</a>, All Right Reserved.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/lib/easing/easing.min.js}"></script>
+    <script th:src="@{/lib/waypoints/waypoints.min.js}"></script>
+    <script th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
+    <script th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
+    <script th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+    <!-- Template Javascript -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+
+</html>

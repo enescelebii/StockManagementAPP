@@ -1,0 +1,191 @@
+[
+  {
+    "stockName": "Laptop",
+    "stockPrice": 15000.50,
+    "stockQuantity": 10,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Yüksek performanslı bir dizüstü bilgisayar.",
+    "stockImagePath": "STK-1001.png"
+  },
+  {
+    "stockName": "Kulaklık",
+    "stockPrice": 750.75,
+    "stockQuantity": 50,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Aksesuar",
+    "stockDescription": "Gürültü önleyici kulaklık.",
+    "stockImagePath": "STK-1002.png"
+  },
+  {
+    "stockName": "Akıllı Saat",
+    "stockPrice": 2200.99,
+    "stockQuantity": 25,
+    "stockStatus": "OUT_OF_STOCK",
+    "stockCategory": "Giyilebilir Teknoloji",
+    "stockDescription": "Akıllı özelliklere sahip bir saat.",
+    "stockImagePath": "STK-1003.png"
+  },
+  {
+    "stockName": "Telefon",
+    "stockPrice": 4500.00,
+    "stockQuantity": 30,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Yeni model akıllı telefon.",
+    "stockImagePath": "STK-1004.png"
+  },
+  {
+    "stockName": "Bluetooth Hoparlör",
+    "stockPrice": 1500.99,
+    "stockQuantity": 40,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Aksesuar",
+    "stockDescription": "Kablosuz Bluetooth hoparlör.",
+    "stockImagePath": "STK-1005.png"
+  },
+  {
+    "stockName": "Gaming Mouse",
+    "stockPrice": 450.25,
+    "stockQuantity": 60,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Aksesuar",
+    "stockDescription": "Ergonomik ve yüksek hassasiyetli oyun faresi.",
+    "stockImagePath": "STK-1006.png"
+  },
+  {
+    "stockName": "4K TV",
+    "stockPrice": 12000.00,
+    "stockQuantity": 5,
+    "stockStatus": "OUT_OF_STOCK",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Yüksek çözünürlükte 4K LED televizyon.",
+    "stockImagePath": "STK-1007.png"
+  },
+  {
+    "stockName": "Akıllı Ev Sistemi",
+    "stockPrice": 8000.50,
+    "stockQuantity": 10,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Ev Teknolojisi",
+    "stockDescription": "Evdeki tüm cihazları kontrol edebileceğiniz akıllı ev sistemi.",
+    "stockImagePath": "STK-1008.png"
+  },
+  {
+    "stockName": "Dijital Fotoğraf Makinesi",
+    "stockPrice": 3500.00,
+    "stockQuantity": 15,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Profesyonel kullanım için dijital fotoğraf makinesi.",
+    "stockImagePath": "STK-1009.png"
+  },
+  {
+    "stockName": "Laptop Çantası",
+    "stockPrice": 350.50,
+    "stockQuantity": 70,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Aksesuar",
+    "stockDescription": "Laptop taşıma çantası, şık ve dayanıklı.",
+    "stockImagePath": "STK-1010.png"
+  },
+  {
+    "stockName": "Tablet",
+    "stockPrice": 3000.00,
+    "stockQuantity": 20,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Çeşitli kullanım için tablet cihaz.",
+    "stockImagePath": "STK-1011.png"
+  },
+  {
+    "stockName": "Kamera",
+    "stockPrice": 1200.00,
+    "stockQuantity": 35,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Dış mekan çekimleri için su geçirmez kamera.",
+    "stockImagePath": "STK-1012.png"
+  },
+  {
+    "stockName": "Mikrofon",
+    "stockPrice": 600.00,
+    "stockQuantity": 40,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Aksesuar",
+    "stockDescription": "Stüdyo ve podcast kayıtları için mikrofon.",
+    "stockImagePath": "STK-1013.png"
+  },
+  {
+    "stockName": "Projector",
+    "stockPrice": 5000.00,
+    "stockQuantity": 8,
+    "stockStatus": "OUT_OF_STOCK",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Full HD görüntü projeksiyon cihazı.",
+    "stockImagePath": "STK-1014.png"
+  },
+  {
+    "stockName": "Oyun Konsolu",
+    "stockPrice": 6000.00,
+    "stockQuantity": 15,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Son model oyun konsolu.",
+    "stockImagePath": "STK-1015.png"
+  },
+  {
+    "stockName": "Akıllı Telefon Aksesuarı",
+    "stockPrice": 250.00,
+    "stockQuantity": 50,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Aksesuar",
+    "stockDescription": "Telefon koruma kılıfı ve ekran koruyucu.",
+    "stockImagePath": "STK-1016.png"
+  },
+  {
+    "stockName": "Yazıcı",
+    "stockPrice": 1200.00,
+    "stockQuantity": 25,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Elektronik",
+    "stockDescription": "Ofis ve ev kullanımı için yazıcı.",
+    "stockImagePath": "STK-1017.png"
+  },
+  {
+    "stockName": "Elektrikli Süpürge",
+    "stockPrice": 700.00,
+    "stockQuantity": 20,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Ev Teknolojisi",
+    "stockDescription": "Yüksek emiş gücüne sahip elektrikli süpürge.",
+    "stockImagePath": "STK-1018.png"
+  },
+  {
+    "stockName": "TV Kumandası",
+    "stockPrice": 150.00,
+    "stockQuantity": 100,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Aksesuar",
+    "stockDescription": "Ekranların tüm işlevlerini kontrol etmek için kumanda.",
+    "stockImagePath": "STK-1019.png"
+  },
+  {
+    "stockName": "Mikrodalga Fırın",
+    "stockPrice": 1800.00,
+    "stockQuantity": 12,
+    "stockStatus": "AVAILABLE",
+    "stockCategory": "Ev Teknolojisi",
+    "stockDescription": "Güçlü mikrodalga fırın.",
+    "stockImagePath": "STK-1020.png"
+  },
+  {
+    "stockName": "Buzdolabı",
+    "stockPrice": 5500.00,
+    "stockQuantity": 7,
+    "stockStatus": "OUT_OF_STOCK",
+    "stockCategory": "Ev Teknolojisi",
+    "stockDescription": "Yüksek enerji verimliliğine sahip buzdolabı.",
+    "stockImagePath": "STK-1021"
+  }
+]
