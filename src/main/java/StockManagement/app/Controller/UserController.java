@@ -63,19 +63,6 @@ public class UserController {
         return new ResponseEntity<>("Kullanıcı başarıyla eklendi", HttpStatus.CREATED); // Yeni eklenen user için 201 döndürülüyor
     }
 
-    // Kullanıcıyı isme göre silme
-    /*@DeleteMapping("/delete/{username}")
-    public ResponseEntity<Void> deleteUserByUsername(@PathVariable("username") String username) {
-        Optional<User> userOpt = userServiceImpl.findByUsername(username);
-
-        if (userOpt.isPresent()) {
-            userServiceImpl.deleteByName(userOpt.get()); // Kullanıcıyı bulduysak silme işlemi yapıyoruz
-            return ResponseEntity.noContent().build(); // 204 No Content döner
-        } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found döner, kullanıcı bulunamazsa
-        }
-    }*/
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable("id") int id) {

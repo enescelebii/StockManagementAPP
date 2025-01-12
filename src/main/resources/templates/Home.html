@@ -76,8 +76,8 @@
                 <a href="#" class="sidebar-toggler flex-shrink-0">
                     <i class="fa fa-bars"></i>
                 </a>
-                <form class="d-none d-md-flex ms-4">
-                    <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+                <form class="d-none d-md-flex ms-4" onsubmit="searchStocks(); return false;">
+                    <input id="search-input" class="form-control bg-dark border-0" type="search" placeholder="Search" aria-label="Search">
                 </form>
                 <button type="button" class="btn btn-warning m-2" data-bs-toggle="modal" data-bs-target="#addStockModal">
                     Add Stock

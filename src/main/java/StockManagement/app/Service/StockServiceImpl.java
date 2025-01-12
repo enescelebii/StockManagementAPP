@@ -34,6 +34,10 @@ public class StockServiceImpl implements StockService {
         this.stockRepository = stockRepository;
     }
 
+    public Page<Stock> searchByName(String stockName, Pageable pageable) {
+        return stockRepository.findByStockNameContainingIgnoreCase(stockName, pageable);
+    }
+
     @Override
     public Stock addStock(Stock stock) {
         // StockCode otomatik oluştur

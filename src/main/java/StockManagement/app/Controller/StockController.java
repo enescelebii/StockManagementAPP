@@ -263,32 +263,19 @@ public class StockController {
 
     // arama işlemleri
     @GetMapping("/search")
-    public ResponseEntity<List<StockDTO>> searchStocks(
-            @RequestParam(required = false) String stockcode,
-            @RequestParam(required = false) String stockname) {
+    public ResponseEntity<Page<StockDTO>> searchStocks(
+            @RequestParam String stockname,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
 
-        List<Stock> stocks;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Stock> stockPage = stockService.searchByName(stockname, pageable);
 
-        // stockcode varsa, stockcode ile arama yapılır
-        if (stockcode != null && !stockcode.isEmpty()) {
-            stocks = List.of(stockService.getStockByStockCode(stockcode));
-        }
-        // stockname varsa, stockname ile arama yapılır
-        else if (stockname != null && !stockname.isEmpty()) {
-            stocks = List.of(stockService.getStockByName(stockname));
-        }
-        // Herhangi bir parametre yoksa, 400 Bad Request dönülür
-        else {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        // Bulunan stokları DTO'ya dönüştürüp döndürür
-        List<StockDTO> stockDTOs = stocks.stream()
-                .map(stockMapper::toDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(stockDTOs);
+        Page<StockDTO> stockDTOPage = stockPage.map(stockMapper::toDTO);
+        return ResponseEntity.ok(stockDTOPage);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStock(@PathVariable int id) {
