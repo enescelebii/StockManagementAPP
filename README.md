@@ -46,14 +46,21 @@ Bu kullanıcı ile sisteme giriş yaparak temel işlemleri test edebilirsiniz. �
 - **JDK 11** veya daha yüksek bir sürüm ☕
 - **Maven 3.x** 📦
 - **Git** 🧳
-
-![image](https://github.com/user-attachments/assets/db389eb9-d455-4d11-a956-148b3b810e06)
-![image](https://github.com/user-attachments/assets/3123637b-897c-43b0-8c13-f8ffac69aca7)
-![image](https://github.com/user-attachments/assets/c1cbd674-ae7c-49d2-afcb-a210c8f373a8)
-![image](https://github.com/user-attachments/assets/94bd052b-5f7b-4ba8-be09-aaa7d32a018f)
-![image](https://github.com/user-attachments/assets/544f0aaa-6ada-40ef-94cc-ab1d463f153e)
-![image](https://github.com/user-attachments/assets/7662e395-eebe-4fab-ac1a-55108a4f5d3c)
-
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/db389eb9-d455-4d11-a956-148b3b810e06" width="60%" />
+  <img src="https://github.com/user-attachments/assets/3123637b-897c-43b0-8c13-f8ffac69aca7" width="35%" />
+  
+</div>
+  
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/94bd052b-5f7b-4ba8-be09-aaa7d32a018f" width="50%" />
+  <img src="https://github.com/user-attachments/assets/544f0aaa-6ada-40ef-94cc-ab1d463f153e" width="30%" />
+  
+</div>
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/c1cbd674-ae7c-49d2-afcb-a210c8f373a8" width="30%" />
+  <img src="https://github.com/user-attachments/assets/7662e395-eebe-4fab-ac1a-55108a4f5d3c" width="30%" />
+</div>
 
 ### Adımlar
 
