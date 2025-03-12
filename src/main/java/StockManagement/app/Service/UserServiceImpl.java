@@ -21,10 +21,10 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
     public User addUser(User user){
-        // Şifreyi hash'le
+
         String encodedPassword = passwordEncoder.encode(user.getPassword());
 
-        // Hash'lenmiş şifreyi set et
+
         user.setPassword(encodedPassword);
         return userRepository.save(user);
     }

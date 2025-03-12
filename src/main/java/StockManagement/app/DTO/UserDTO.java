@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-@Data // Getter, Setter, toString, equals, hashCode metodlarını otomatik olarak oluşturur
-@NoArgsConstructor // Parametresiz constructor oluşturur
-@AllArgsConstructor // Parametreli constructor oluşturur
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
     private int id;
     private String username;

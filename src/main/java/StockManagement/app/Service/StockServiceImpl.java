@@ -50,13 +50,11 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public String generateStockCode() {
-        // UUID üret
+
         String uuid = UUID.randomUUID().toString();
 
-        // UUID'den sadece ilk 4 karakterini al
         String customCode = uuid.substring(0, 4);
 
-        // Özel formatta stockCode oluştur
         return "STK-" + customCode.toUpperCase();
     }
 
@@ -165,27 +163,22 @@ public class StockServiceImpl implements StockService {
 
         stock.get().setStockImagePath(fileName);
         stockRepository.save(stock.get());
-        // raporun kaydedilmesi
         return fileName;
 
     }
 
     public Stock sellStock(String stockCode, int quantity) {
-        // Stok bulunup bulunmadığını kontrol et
         Stock stock = stockRepository.findByStockCode(stockCode);
         if (stock == null) {
             throw new IllegalArgumentException("Stock not found for code: " + stockCode);
         }
 
-        // Yeterli miktar olup olmadığını kontrol et
         if (stock.getStockQuantity() < quantity) {
             throw new IllegalStateException("Insufficient stock for code: " + stockCode);
         }
 
-        // Stok miktarını güncelle
         stock.setStockQuantity(stock.getStockQuantity() - quantity);
 
-        // Güncellenmiş stoğu kaydet
         stockRepository.save(stock);
 
         return stock;
