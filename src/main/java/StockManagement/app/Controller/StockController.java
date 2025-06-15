@@ -3,10 +3,7 @@ package StockManagement.app.Controller;
 import StockManagement.app.DTO.StockDTO;
 import StockManagement.app.Mapper.StockMapper;
 import StockManagement.app.Model.Stock;
-import StockManagement.app.Repository.UserRepository;
-import StockManagement.app.Service.CustomUserDetailsService;
 import StockManagement.app.Service.StockServiceImpl;
-import StockManagement.app.Service.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,9 +42,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/stocks")
 public class StockController {
 
-    private final CustomUserDetailsService customUserDetailsService;
-    private final UserRepository userRepository;
-
     @Value("${upload.dir}")
     private String uploadDir;
 
@@ -56,11 +50,9 @@ public class StockController {
 
 
     @Autowired
-    public StockController(StockServiceImpl stockService, StockMapper stockMapper, CustomUserDetailsService customUserDetailsService, UserServiceImpl userServiceImpl, UserServiceImpl userServiceImpl1, UserRepository userRepository) {
+    public StockController(StockServiceImpl stockService, StockMapper stockMapper) {
         this.stockService = stockService;
         this.stockMapper = stockMapper;
-        this.customUserDetailsService = customUserDetailsService;
-        this.userRepository = userRepository;
     }
 
     @PostMapping("/add")
@@ -261,21 +253,19 @@ public class StockController {
 
 
 
-    // arama işlemleri
+    // Search endPoint
     @GetMapping("/search")
-    public ResponseEntity<Page<StockDTO>> searchStocks(
-            @RequestParam String stockname,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size,
-            @RequestParam(defaultValue = "id") String sortBy) {
+    public ResponseEntity<List<StockDTO>> searchStocks(
+            @RequestParam String stockname)
+    {
+        List<Stock> stocksByName = stockService.getStockByName(stockname);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        Page<Stock> stockPage = stockService.searchByName(stockname, pageable);
-
-        Page<StockDTO> stockDTOPage = stockPage.map(stockMapper::toDTO);
-        return ResponseEntity.ok(stockDTOPage);
+        if (stocksByName.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<StockDTO> stockDTOs = stocksByName.stream().map(stockMapper::toDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(stockDTOs);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStock(@PathVariable int id) {

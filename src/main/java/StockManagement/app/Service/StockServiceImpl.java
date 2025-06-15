@@ -1,6 +1,5 @@
 package StockManagement.app.Service;
 
-import StockManagement.app.Exception.GlobalExceptionHandler;
 import StockManagement.app.Model.Stock;
 import StockManagement.app.Repository.StockRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,9 +33,7 @@ public class StockServiceImpl implements StockService {
         this.stockRepository = stockRepository;
     }
 
-    public Page<Stock> searchByName(String stockName, Pageable pageable) {
-        return stockRepository.findByStockNameContainingIgnoreCase(stockName, pageable);
-    }
+
 
     @Override
     public Stock addStock(Stock stock) {
@@ -122,14 +119,10 @@ public class StockServiceImpl implements StockService {
         return stockRepository.findAll();
     }
 
-    public Stock getStockByName(String name) {
-        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByStockName(name));
-        if (stock.isPresent()) {
-            return stock.get();
-        }else {
-            throw new RuntimeException("Stock not found");
-        }
+    public List<Stock> getStockByName(String name) {
+       return stockRepository.findByStockNameContainingIgnoreCase(name);
     }
+
     public List<Stock> getStocksByStatus(String status) {
         return stockRepository.findByStockStatus(status);
     }
@@ -149,9 +142,6 @@ public class StockServiceImpl implements StockService {
 
     public String saveStockImage(int id, MultipartFile file)throws IOException {
         Optional<Stock> stock = stockRepository.findById(id);
-        if(stock==null) {
-            return "Rapor bulunamadı";
-        }
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Dosya boş olamaz");
 
@@ -160,6 +150,7 @@ public class StockServiceImpl implements StockService {
         Path filePath = Paths.get(uploadDir).resolve(fileName);
 
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
 
         stock.get().setStockImagePath(fileName);
         stockRepository.save(stock.get());
@@ -183,10 +174,4 @@ public class StockServiceImpl implements StockService {
 
         return stock;
     }
-
-
-
-
-
-
 }

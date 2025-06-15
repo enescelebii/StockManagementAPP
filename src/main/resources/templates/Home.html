@@ -299,9 +299,21 @@
             };
             </script>
             <script>
+
+                function searchStock(event) {
+                    event.preventDefault();
+                    const searchInput = document.getElementById('searchInput');
+                    const searchValue = searchInput.value;
+                    if (searchValue.length > 0) {
+                        fetch(`/stocks/search?search=${searchValue}`).then(response => response.json())
+                    }
+                }
+
+
+
                 /*Stock list table and Sortings*/
                 function loadStocks(page, sortBy = 'id') {
-                    fetch(`/stocks/page?page=${page}&size=8&sortBy=${sortBy}`)
+                 fetch(`/stocks/page?page=${page}&size=8&sortBy=${sortBy}`)
                         .then(response => response.json())
                         .then(data => {
                             const stockTableBody = document.getElementById('stock-table-body');
@@ -309,7 +321,8 @@
                             stockTableBody.innerHTML = "";
                             pagination.innerHTML = "";
 
-                            if (data && data.stocks && data.stocks.length > 0) {
+
+                    if (data && data.stocks && data.stocks.length > 0) {
                                 data.stocks.forEach(stock => {
                                     const row = document.createElement('tr');
                                     row.innerHTML = `
