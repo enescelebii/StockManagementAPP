@@ -5,6 +5,7 @@ import StockManagement.app.Mapper.StockMapper;
 import StockManagement.app.Model.Stock;
 import StockManagement.app.Service.StockServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -35,9 +36,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+import java.util.Map;
+
+
+@Slf4j
 @RestController
 @RequestMapping("/stocks")
 public class StockController {
@@ -47,6 +50,8 @@ public class StockController {
 
     private final StockServiceImpl stockService;
     private final StockMapper stockMapper;
+
+    private static final String ERROR_ACTION = "error";
 
 
     @Autowired
@@ -109,17 +114,17 @@ public class StockController {
             // Stok bilgisini alın
             Stock stock = stockService.getStockById(id);
             if (stock == null || stock.getStockImagePath() == null) {
-                System.err.println("Hata: Stok bulunamadı veya resim yolu eksik (ID: " + id + ")");
+                log.error("Hata: Stok bulunamadı veya resim yolu eksik (ID: {})", id);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
             // Dosya yolunu belirle (static/img/StockPhotos altında olmalı)
             Path file = Paths.get("src/main/resources/static/img/StockPhotos/" + stock.getStockImagePath());
-            System.out.println("Dosya yolu: " + file.toAbsolutePath());
+            log.info("Dosya yolu: {}", file.toAbsolutePath());
 
             // Dosya var mı ve okunabilir mi kontrolü
             if (!Files.exists(file) || !Files.isReadable(file)) {
-                System.err.println("Hata: Dosya bulunamadı veya okunabilir değil (Yol: " + file.toAbsolutePath() + ")");
+                log.error("Hata: Dosya bulunamadı veya okunabilir değil (Yol: {})", file.toAbsolutePath());
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
@@ -136,10 +141,10 @@ public class StockController {
                     .body(resource);
 
         } catch (MalformedURLException e) {
-            System.err.println("Hata: URL oluşturulurken bir sorun oluştu: " + e.getMessage());
+            log.error("Hata: URL oluşturulurken bir sorun oluştu: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
-            System.err.println("Hata: Dosya okuma sırasında bir sorun oluştu: " + e.getMessage());
+            log.error("Hata: Dosya okuma sırasında bir sorun oluştu: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -181,7 +186,7 @@ public class StockController {
             // Sıralama alanı kontrolü
             if (!validSortFields.contains(sortBy)) {
                 return ResponseEntity.badRequest()
-                        .body(Map.of("error", "Geçersiz sıralama alanı: " + sortBy));
+                        .body(Map.of(ERROR_ACTION, "Geçersiz sıralama alanı: " + sortBy));
             }
 
             Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
@@ -191,7 +196,7 @@ public class StockController {
             List<StockDTO> stockDTOs = stockPage.getContent()
                     .stream()
                     .map(stockMapper::toDTO) // MapStruct ya da manuel dönüşüm
-                    .collect(Collectors.toList());
+                    .toList();
 
             // Yanıta metadata bilgileri ekleniyor
             Map<String, Object> response = new HashMap<>();
@@ -206,11 +211,11 @@ public class StockController {
         } catch (IllegalArgumentException e) {
             // Hatalı sortBy değeri gibi durumlar
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Geçersiz sıralama alanı: " + sortBy));
+                    .body(Map.of(ERROR_ACTION, "Geçersiz sıralama alanı: " + sortBy));
         } catch (Exception e) {
             // Genel hata yönetimi
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Bir hata oluştu"));
+                    .body(Map.of(ERROR_ACTION, "Bir hata oluştu"));
         }
     }
 
@@ -230,7 +235,7 @@ public class StockController {
         // Stokları DTO'ya dönüştürür
         List<StockDTO> stockDTOs = stocks.stream()
                 .map(stockMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
 
         // 200 OK ve stok listesini döner
         return ResponseEntity.ok(stockDTOs);
@@ -241,12 +246,12 @@ public class StockController {
     public ResponseEntity<StockDTO> getStock(@PathVariable int id) {
         Stock stock = stockService.getStockById(id);
         if (stock != null) {
-            System.out.println("Stock found: " + stock); // Burada stock nesnesini logla
+            log.info("Stock found: {}", stock); // Burada stock nesnesini logla
             StockDTO stockDTO = stockMapper.toDTO(stock);
-            System.out.println("StockDTO: " + stockDTO); // DTO çıktısını logla
+            log.info("StockDTO: {}", stockDTO); // DTO çıktısını logla
             return ResponseEntity.ok(stockDTO);
         } else {
-            System.out.println("Stock not found for id: " + id); // Eğer stock null ise, bu mesajı alırsınız
+            log.info("Stock not found for id: {}", id); // Eğer stock null ise, bu mesajı alırsınız
         }
         return ResponseEntity.notFound().build();
     }
@@ -263,7 +268,7 @@ public class StockController {
         if (stocksByName.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        List<StockDTO> stockDTOs = stocksByName.stream().map(stockMapper::toDTO).collect(Collectors.toList());
+        List<StockDTO> stockDTOs = stocksByName.stream().map(stockMapper::toDTO).toList();
         return ResponseEntity.ok(stockDTOs);
     }
 

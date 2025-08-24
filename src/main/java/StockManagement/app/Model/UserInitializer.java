@@ -2,10 +2,12 @@ package StockManagement.app.Model;
 
 import StockManagement.app.Model.Enums.UserRoleEnum;
 import StockManagement.app.Repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class UserInitializer implements CommandLineRunner {
 
@@ -28,9 +30,9 @@ public class UserInitializer implements CommandLineRunner {
             user.getRoles().add(UserRoleEnum.ROLE_ADMIN); // Kullanıcı rolü ayarla
             userRepository.save(user);
 
-            System.out.println("Default admin user created: " + username);
+            log.info("Default admin user created: {}", username);
         } else {
-            System.out.println("Default admin user already exists.");
+            log.info("Default admin user already exists.");
         }
     }
 

@@ -5,7 +5,7 @@ import StockManagement.app.Service.StockService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +14,15 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class StockInitializer implements CommandLineRunner {
 
-    @Autowired
-    private StockService stockService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final StockService stockService;
 
-    @Autowired
-    private StockRepository stockRepository;
+    private final ObjectMapper objectMapper;
+
+    private final StockRepository stockRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -42,12 +41,12 @@ public class StockInitializer implements CommandLineRunner {
                 }
 
                 stockRepository.saveAll(stocks); // Verileri veritabanına kaydediyoruz
-                System.out.println("Başlangıç verileri başarıyla yüklendi.");
+                log.info("Başlangıç verileri başarıyla yüklendi.");
             } else {
-                System.err.println("Veri dosyasındaki stoklar boş!");
+                log.error("Veri dosyasındaki stoklar boş!");
             }
         } else {
-            System.err.println("initial-stocks.json bulunamadı!");
+            log.error("initial-stocks.json bulunamadı!");
         }
     }
 }

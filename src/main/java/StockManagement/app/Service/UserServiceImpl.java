@@ -32,10 +32,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
     public User getUser(int id){
-        return userRepository.findById(id).get();
+        return userRepository.findById(id).orElseThrow();
     }
     public void deleteUser(int id){
-        User user = userRepository.findById(id).get();
+        User user = userRepository.findById(id).orElseThrow();
         userRepository.delete(user);
     }
     public User updateUser(User user){

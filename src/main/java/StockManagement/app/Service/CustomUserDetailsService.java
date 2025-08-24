@@ -1,6 +1,5 @@
 package StockManagement.app.Service;
 
-import StockManagement.app.Model.Enums.UserRoleEnum;
 import StockManagement.app.Model.User;
 import StockManagement.app.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 

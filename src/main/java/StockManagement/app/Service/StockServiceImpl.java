@@ -1,5 +1,6 @@
 package StockManagement.app.Service;
 
+import StockManagement.app.Model.Enums.StockStatusEnum;
 import StockManagement.app.Model.Stock;
 import StockManagement.app.Repository.StockRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -59,34 +60,23 @@ public class StockServiceImpl implements StockService {
     public Stock updateStock(int id, Stock updatedStock) {
         return stockRepository.findById(id)
                 .map(existingStock -> {
-                    if (updatedStock.getStockCode() != null) {
-                        existingStock.setStockCode(updatedStock.getStockCode());
-                    }
-                    if (updatedStock.getStockName() != null) {
-                        existingStock.setStockName(updatedStock.getStockName());
-                    }
-                    if (updatedStock.getStockPrice() != 0) {
-                        existingStock.setStockPrice(updatedStock.getStockPrice());
-                    }
-                    if (updatedStock.getStockQuantity() != 0) {
-                        existingStock.setStockQuantity(updatedStock.getStockQuantity());
-                    }
-                    if (updatedStock.getStockStatus() != null) {
-                        existingStock.setStockStatus(updatedStock.getStockStatus());
-                    }
-                    if (updatedStock.getStockCategory() != null) {
-                        existingStock.setStockCategory(updatedStock.getStockCategory());
-                    }
-                    if (updatedStock.getStockDescription() != null) {
-                        existingStock.setStockDescription(updatedStock.getStockDescription());
-                    }
-                    if (updatedStock.getStockImagePath() != null) {
-                        existingStock.setStockImagePath(updatedStock.getStockImagePath());
-                    }
+                    copyNonNullFields(updatedStock, existingStock);
                     return stockRepository.save(existingStock);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Stock not found with id: " + id));
     }
+
+    private void copyNonNullFields(Stock source, Stock target) {
+        Optional.ofNullable(source.getStockCode()).ifPresent(target::setStockCode);
+        Optional.ofNullable(source.getStockName()).ifPresent(target::setStockName);
+        if (source.getStockPrice() != 0) target.setStockPrice(source.getStockPrice());
+        if (source.getStockQuantity() != 0) target.setStockQuantity(source.getStockQuantity());
+        Optional.ofNullable(source.getStockStatus()).ifPresent(target::setStockStatus);
+        Optional.ofNullable(source.getStockCategory()).ifPresent(target::setStockCategory);
+        Optional.ofNullable(source.getStockDescription()).ifPresent(target::setStockDescription);
+        Optional.ofNullable(source.getStockImagePath()).ifPresent(target::setStockImagePath);
+    }
+
 
 
 
@@ -98,7 +88,7 @@ public class StockServiceImpl implements StockService {
             return true;
         }
         else{
-            throw new RuntimeException("Stock not found");
+            throw new EntityNotFoundException("Stock not found");
         }
     }
 
@@ -111,7 +101,7 @@ public class StockServiceImpl implements StockService {
         if (stock.isPresent()) {
             return stock.get();
         }else {
-            throw new RuntimeException("Stock not found");
+            throw new EntityNotFoundException("Stock not found");
         }
     }
 
@@ -124,7 +114,7 @@ public class StockServiceImpl implements StockService {
     }
 
     public List<Stock> getStocksByStatus(String status) {
-        return stockRepository.findByStockStatus(status);
+        return stockRepository.findByStockStatus(StockStatusEnum.valueOf(status));
     }
     public List<Stock> getStocksByCategory(String category) {
         return stockRepository.findByStockCategory(category); // Kategoriye göre filtreleme
@@ -135,7 +125,7 @@ public class StockServiceImpl implements StockService {
         if (stock.isPresent()) {
             return stock.get();
         }else {
-            throw new RuntimeException("Stock not found");
+            throw new EntityNotFoundException("Stock not found");
         }
     }
 
@@ -152,8 +142,10 @@ public class StockServiceImpl implements StockService {
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
 
-        stock.get().setStockImagePath(fileName);
-        stockRepository.save(stock.get());
+        stock.ifPresent(s -> {
+            s.setStockImagePath(fileName);
+            stockRepository.save(s);
+        });
         return fileName;
 
     }

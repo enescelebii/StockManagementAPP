@@ -221,7 +221,7 @@ body.modal-open {
     right: 15px;
     border: none;
     content: "\f107";
-    font-family: "Font Awesome 5 Free";
+    font-family: "Font Awesome 5 Free", serif;
     font-weight: 900;
     transition: .5s;
 }
@@ -278,7 +278,7 @@ body.modal-open {
     vertical-align: middle;
     border: none;
     content: "\f107";
-    font-family: "Font Awesome 5 Free";
+    font-family: "Font Awesome 5 Free", serif;
     font-weight: 900;
     transition: .5s;
 }
@@ -300,7 +300,7 @@ body.modal-open {
 }
 
 .bootstrap-datetimepicker-widget .table * {
-    border-bottom-width: 0px;
+    border-bottom-width: 0;
 }
 
 .bootstrap-datetimepicker-widget .table th {
@@ -324,7 +324,7 @@ body.modal-open {
 
 /*** Testimonial ***/
 .progress .progress-bar {
-    width: 0px;
+    width: 0;
     transition: 2s;
 }
 
